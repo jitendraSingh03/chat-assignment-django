@@ -14,5 +14,5 @@ admim having permission to message every normal person or other admin also.
 
 
 ## command for running program.
->>> python manage.py runserver
+>>> python manage.py runserver \
 >>> python manage.py collectstatic
