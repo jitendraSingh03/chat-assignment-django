@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .container {
+        display: flex;
+        flex-direction: row
+    }
+
+    .container>.left-container {
+        flex: 0.3;
+        justify-content: center;
+        text-align-last: center;
+        margin-top: 10%;
+
+    }
+
+    .container>.right-container {
+        flex: 0.7;
+        height: 100vh;
+        overflow-x: scroll;
+        background-color: aliceblue;
+    }
+
+    .right-container>.container {
+        display: flex;
+        flex-direction: column;
+        margin: 50px;
+    }
+
+    .msg-info {
+        margin: 10px 10px;
+        display: flex;
+    }
+
+    .msg-info>.msg {
+        margin-right: 10px;
+    }
+
+    .msg-info>.username {
+        color: #730808c9;
+        ;
+        margin-left: 10px;
+    }
+</style>
+
+<body>
+    <div class="home">
+        <div class="container">
+            <div class="left-container">
+                {% if user.is_superuser %}
+                {% else %}
+                <h1>Send Message</h1>
+                <form method="POST" action="{% url 'message' %}">{% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <input type="text" name='username' value="{{ username }}" hidden>
+                            <textarea type="text" class="form-control" name="message" id="inputPassword"
+                                placeholder="Message"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn form-control">Send</button>
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
+                <div class="admin-message">
+                    {% if user.is_superuser %}
+                        <h2>Your contact</h2>
+                        {% for doc in all_user_docs %}
+                            {% if doc == username %}
+                            
+                            {% else %}
+                                <form action="{% url 'admin_chat' %}">
+                                    <label>{{ doc }} </label>
+                                    <input type="text" name='personReceive'value="{{ doc }}" hidden>
+                                    <input type="text" name='personSend' value="{{ username }} " hidden>
+                                    <button type="submit"> start Chat</button>
+                                </form>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p>Hello, ordinary visitor.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="right-container">
+                <div class="container">
+                    <form action="{% url 'message' %}">
+                        <input type="text" name='personSend' value="{{ username }}" hidden>
+                        <button type="submit"> Refresh chat</button>
+                    </form>
+                    {% if user.is_superuser %}
+                         <h1>Welcome super user</h1>
+                    {% else %}
+                        {% for i in msg_detail %}
+                        <div class="msg-info">
+                            <div class="msg">{{ i.msg }}</div>
+                            <div class="username">@{{ i.username }}</div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
